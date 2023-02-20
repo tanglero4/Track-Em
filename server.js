@@ -30,7 +30,7 @@ db.query('SELECT * FROM employee', function (err, results) {
         type: "list",
         name: "selections" ,
         message: "What would you like to do?",
-        choices: ["View all Departmets", "Add Department", "Remove Department", "View all Roles", "View all Employees", "Add Role", "Add Employee", "Update Employee Role", "Nevermind"]
+        choices: ["View all Departmets", "View Roles", "View Employees", "Add Department", "Add Role", "Add Employee", "Update Employee Role", "Remove Department",  "Nevermind"]
       }
   
     ]).then(answers=>{
@@ -41,14 +41,11 @@ db.query('SELECT * FROM employee', function (err, results) {
           case "Add Department": 
           return addDepartment();
 
-          case "Remove Department": 
-          return removeDepartment();
+          case "View Roles": 
+          return viewRoles();
 
-          case "View all Roles": 
-          return viewAllRoles();
-
-          case "View all Employees": 
-          return viewAllEmployees();
+          case "View Employees": 
+          return viewEmployees();
 
           case "Add Role": 
           return addRole();
@@ -58,6 +55,9 @@ db.query('SELECT * FROM employee', function (err, results) {
 
           case "Update Employee Role": 
           return updateEmployeeRole();
+          
+          case "Remove Department": 
+          return removeDepartment();
 
         default:
           return process.exit();
@@ -89,6 +89,33 @@ db.query('SELECT * FROM employee', function (err, results) {
     })
     });
    }
+
+   const viewRoles = () => {
+    db.query("SELECT title AS ROLE FROM ROLE", function (err, results) {
+      if (err) throw err;
+      console.table(results, ["ROLE"]);
+      db.end();
+      console.log(results);
+    });
+  };
+  
+  const addRole = ()=> {
+    inquirer.prompt([
+      {
+        type: "input",
+        name: "title",
+        message: "What is the title of the role?"
+      }
+    ]).then(answers=>{
+      db.query("INSERT INTO ROLE SELECT title = ?",[answers.title], function (err, results) {
+        // if (err) throw err;
+        console.table(results, ["Role"]);
+        db.end();
+        console.log(results);
+      });
+    });
+  }
+
    const removeDepartment = ()=> {
     inquirer.prompt([
       {
@@ -106,4 +133,5 @@ db.query('SELECT * FROM employee', function (err, results) {
     })
     });
    }
+
   selector();

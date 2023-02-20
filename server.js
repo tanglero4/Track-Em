@@ -117,7 +117,7 @@ db.query('SELECT * FROM employee', function (err, results) {
         message: "What is the department id?"
       }
     ]).then(answers=>{
-      db.query("INSERT INTO ROLE SET (title=[answers.title], salary=[answers.salary], department_id=[answers.department_id]) ", function (err, results) {
+      db.query("INSERT INTO ROLE SET title=[answers.title], salary=[answers.salary], department_id=[answers.department_id] = ?", function (err, results) {
         // if (err) throw err;
         console.table(results, ["Role"]);
         db.end();

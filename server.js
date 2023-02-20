@@ -1,17 +1,10 @@
-const express = require('express');
+const inquirer = require('inquirer');
 // Import and require mysql2
 const mysql = require('mysql2');
 
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-const logo = require('asciiart-logo');
-const config = require('./package.json');
-console.log(logo(config).render());
-
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+// const logo = require('asciiart-logo');
+// const config = require('./package.json');
+// console.log(logo(config).render());
 
 // Connect to database
 const db = mysql.createConnection(
@@ -30,11 +23,58 @@ const db = mysql.createConnection(
 db.query('SELECT * FROM employee', function (err, results) {
     console.log(results);
   });
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-  res.status(404).end();
-});
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  const selector = ()=>{
+    inquirer.prompt([
+      {
+        type: "list",
+        name: "selections" ,
+        message: "What would you like to do?",
+        choices: ["View all Departmets", "Add Department", "Remove Department", "Nevermind"]
+      }
+  
+    ]).then(answers=>{
+      switch (answers.selections) {
+        case "View all Departmets": 
+          
+          return viewDepartment();
+
+          case "Add Department": 
+          
+          return addDepartment();
+
+          case "Remove Department": 
+          
+          return removeDepartment();
+
+        default:
+          return process.exit();
+      }
+    })
+  }
+  const viewDepartment = ()=> {
+    db.query("SELECT name DEPARTMENT FROM DEPARTMENT", function (err, results) {
+      if (err) throw err;
+      console.table(results, ["DEPARTMENT"]);
+      db.end();
+      console.log(results);
+    });
+   }
+   const addDepartment = ()=> {
+    inquirer.prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "What is the name of the department?"
+      }
+  
+    ]).then(answers=>{
+    db.query("INSERT INTO DEPARTMENT SET name = ?",[answers.name], function (err, results) {
+      if (err) throw err;
+      console.table(results, ["DEPARTMENT"]);
+      db.end();
+      console.log(results);
+    })
+    });
+   }
+  selector();

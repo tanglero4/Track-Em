@@ -105,15 +105,25 @@ db.query('SELECT * FROM employee', function (err, results) {
         type: "input",
         name: "title",
         message: "What is the title of the role?"
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "What is the salary?"
+      },
+      {
+        type: "input",
+        name: "department_id",
+        message: "What is the department id?"
       }
     ]).then(answers=>{
-      db.query("INSERT INTO ROLE SELECT title = ?",[answers.title], function (err, results) {
+      db.query("INSERT INTO ROLE SET (title=[answers.title], salary=[answers.salary], department_id=[answers.department_id]) ", function (err, results) {
         // if (err) throw err;
         console.table(results, ["Role"]);
         db.end();
         console.log(results);
       });
-    });
+    }).then();
   }
 
    const removeDepartment = ()=> {

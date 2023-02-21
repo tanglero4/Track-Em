@@ -91,11 +91,11 @@ db.query('SELECT * FROM employee', function (err, results) {
    }
 
    const viewRoles = () => {
-    db.query("SELECT title AS ROLE FROM ROLE", function (err, results) {
+    db.query("SELECT * FROM ROLE", function (err, results) {
       if (err) throw err;
       console.table(results, ["ROLE"]);
       db.end();
-      console.log(results);
+      console.table(results);
     });
   };
   
@@ -117,15 +117,54 @@ db.query('SELECT * FROM employee', function (err, results) {
         message: "What is the department id?"
       }
     ]).then(answers=>{
-      db.query("INSERT INTO ROLE SET title=[answers.title], salary=[answers.salary], department_id=[answers.department_id] = ?", function (err, results) {
-        // if (err) throw err;
+      db.query(`INSERT INTO ROLE (title, salary, department_id) VALUES (?,?,?)`, [answers.title, answers.salary, answers.department_id] ,function (err, results) {
+        if (err) throw err;
         console.table(results, ["Role"]);
         db.end();
-        console.log(results);
+        console.table(results);
       });
-    }).then();
+    });
   }
-
+  const viewEmployees = ()=> {
+    db.query("SELECT * FROM EMPLOYEE", function (err, results) {
+      if (err) throw err;
+      console.table(results, ["EMPLOYEE"]);
+      db.end();
+      console.table(results);
+    });
+   }
+  const addEmployee = ()=> {
+    inquirer.prompt([
+      {
+        type: "input",
+        name: "first_name",
+        message: "What is the first name of the employee?"
+      },
+        {
+        type: "input",
+        name: "last_name",
+        message: "What is the last name of the employee?"
+      },
+        {
+        type: "input",
+        name: "role_id",
+        message: "Input role ID:"
+      },
+        {
+        type: "input",
+        name: "manager_id",
+        message: "Input manager ID:"
+      }
+  
+    ]).then(answers=>{
+      db.query(`INSERT INTO EMPLOYEE (first_name, last_name, role_id, manager_id ) VALUES (?,?,?,?)`, [answers.first_name, answers.last_name, answers.role_id, answers.manager_id] ,function (err, results) {
+        if (err) throw err;
+        console.table(results, ["EMPLOYEE"]);
+        db.end();
+        console.table(results);
+      });
+    });
+  }
    const removeDepartment = ()=> {
     inquirer.prompt([
       {
